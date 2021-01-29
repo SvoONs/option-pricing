@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../include/Option.h"
+#include "../include/option.h"
 
 TEST(TestOption, TestOptionConstructors) {
     Option option{100.0, 105.0, 0.02, 1.0, 2.0};
