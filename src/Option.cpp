@@ -1,4 +1,4 @@
-#include "../include/Option.h"
+#include "../include/option.h"
 
 Option::Option(float assetPrice, float strikePrice, float interest, float sigma, float yearsToMaturity)
     : assetPrice(assetPrice),
