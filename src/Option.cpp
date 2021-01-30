@@ -1,13 +1,10 @@
 #include "../include/option.h"
 
-Option::Option(float assetPrice, float strikePrice, float interest, float sigma, float yearsToMaturity)
+Option::Option(float assetPrice, float strikePrice, float interest, float sigma, float yearsToMaturity, OptionRight right, OptionStyle style)
     : assetPrice(assetPrice),
       strikePrice(strikePrice),
       interest(interest),
       sigma(sigma),
-      yearsToMaturity(yearsToMaturity) {}
-
-EuropeanCall::EuropeanCall(float assetPrice, float strikePrice, float interest,
-                           float sigma, float yearsToMaturity)
-    : Option(assetPrice, strikePrice, interest, sigma, yearsToMaturity),
-      right(OptionRight::Call) {}
+      yearsToMaturity(yearsToMaturity),
+      right(right),
+      style(style) {}
