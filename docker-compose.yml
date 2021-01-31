@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  optionpricing:
+    image: optionpricing
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      args:
+        USER: ${USER-nobody}
+        UID: ${UID-1234}
+        GID: ${GID-20}
+    volumes:
+      - .:/usr/src/option-pricing
