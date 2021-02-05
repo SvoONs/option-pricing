@@ -43,7 +43,7 @@ add_executable(TestOption test/test_option.cpp include/option.h src/option.cpp)
 target_link_libraries(TestOption gtest_main)
 add_test(NAME TestOption COMMAND TestOption)
 # add TestUtils test suite
-add_executable(TestUtils test/test_utils.cpp include/utils.h src/utils.cpp)
+add_executable(TestUtils test/test_utils.cpp include/utils.h src/utils.cpp include/option.h src/option.cpp)
 target_link_libraries(TestUtils gtest_main)
 add_test(NAME TestUtils COMMAND TestUtils)
 # add TestMCSimulation test suite

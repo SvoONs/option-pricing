@@ -2,4 +2,4 @@
 
 double normalCDF(double x);
 
-double Black_Scholes_Price(const Option &option);
+double BlackScholesPrice(const Option &option);

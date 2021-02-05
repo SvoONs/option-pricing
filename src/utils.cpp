@@ -8,7 +8,7 @@ double normalCDF(double x) {
     return std::erfc(-x / std::sqrt(2)) / 2;
 }
 
-double Black_Scholes_Price(const Option &option) {
+double BlackScholesPrice(const Option &option) {
     double d1 = (std::log(option.assetPrice / option.strikePrice) +
                  (option.interest + std::pow(option.sigma, 2) / 2) *
                      (option.yearsToMaturity)) /

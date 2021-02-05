@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
 #include "../include/utils.h"
+#include "gtest/gtest.h"
 
 TEST(TestUtils, TestNormalCDF) {
     // Test some quantiles of normal distribution
@@ -17,6 +17,16 @@ TEST(TestUtils, TestNormalCDF) {
     ASSERT_NEAR(normalCDF(tail), 1, 1e-4);
 }
 
-TEST(TestUtils, TestBlackScholesCall) {
-
+TEST(TestUtils, TestBlackScholes) {
+    // examples taken from literature:
+    // The complete guide to option pricing formulas, 2nd ed.
+    // E.G. Haug, PhD
+    Option europeanCall{
+        60, 65, 0.08, 0.3, 0.25, OptionRight::Call, OptionStyle::European};
+    double valueEC = BlackScholesPrice(europeanCall);
+    ASSERT_NEAR(valueEC, 2.1334, 1e-04);
+    Option europeanPut{
+        60, 65, 0.08, 0.3, 0.25, OptionRight::Put, OptionStyle::European};
+    double valueEP = BlackScholesPrice(europeanPut);
+    ASSERT_NEAR(valueEP, 5.8462, 1e-04);
 }
