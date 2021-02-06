@@ -1,5 +1,3 @@
-#include "../include/option.h"
+void discountValue(double &value, double discFactor, double t);
 
 double normalCDF(double x);
-
-double BlackScholesPrice(const Option &option);

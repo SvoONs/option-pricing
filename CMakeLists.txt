@@ -43,10 +43,14 @@ add_executable(TestOption test/test_option.cpp include/option.h src/option.cpp)
 target_link_libraries(TestOption gtest_main)
 add_test(NAME TestOption COMMAND TestOption)
 # add TestUtils test suite
-add_executable(TestUtils test/test_utils.cpp include/utils.h src/utils.cpp include/option.h src/option.cpp)
+add_executable(TestUtils test/test_utils.cpp include/utils.h src/utils.cpp)
 target_link_libraries(TestUtils gtest_main)
 add_test(NAME TestUtils COMMAND TestUtils)
+# add TestBlackScholes test suite
+add_executable(TestBlackScholes test/test_black_scholes.cpp include/utils.h src/utils.cpp include/option.h src/option.cpp include/black_scholes.h src/black_scholes.cpp)
+target_link_libraries(TestBlackScholes gtest_main)
+add_test(NAME TestBlackScholes COMMAND TestBlackScholes)
 # add TestMCSimulation test suite
-add_executable(TestMCSimulation test/test_mc_simulation.cpp include/mc_simulation.h src/mc_simulation.cpp)
+add_executable(TestMCSimulation test/test_mc_simulation.cpp include/mc_simulation.h src/mc_simulation.cpp include/option.h src/option.cpp include/utils.h src/utils.cpp)
 target_link_libraries(TestMCSimulation gtest_main)
 add_test(NAME TestMCSimulation COMMAND TestMCSimulation)

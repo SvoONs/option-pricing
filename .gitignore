@@ -37,3 +37,6 @@
 # Docker
 .devcontainer/
 *.debug.yml
+
+# VS Code
+.vscode/
