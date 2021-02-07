@@ -21,3 +21,15 @@ double Option::getPayoff(double currentAssetPrice) const {
     }
     return payoff;
 }
+
+std::ostream &operator<<(std::ostream &os, const Option &option) {
+    auto style = option.style == 0 ? "American" : "European";
+    auto right = option.right == 0 ? "Call" : "Put";
+    os << style << " " << right << " -> "
+       << "asset price: " << option.assetPrice << "$"
+       << ", strike: " << option.strikePrice << "$"
+       << ", interest: " << option.interest * 100 << "%"
+       << ", volatility: " << option.sigma
+       << ", maturity: " << option.yearsToMaturity << " year(s)\n";
+    return os;
+}
