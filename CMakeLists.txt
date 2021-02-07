@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.7)
 
-add_definitions(-std=c++17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
 
-set(CXX_FLAGS "-Wall")
-set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
+# Find all executables
+file(GLOB project_SRCS src/*.cpp) #include/*.h
 
 project(OptionPricing)
-
-add_executable(OptionPricing src/main.cpp)
+add_executable(OptionPricing ${project_SRCS})
 
 ### gtest ###
 # incorporate as documented here:

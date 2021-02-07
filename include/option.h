@@ -1,3 +1,7 @@
+#ifndef OPTION_H
+#define OPTION_H
+
+#include <iostream>
 
 enum OptionRight { Call, Put };
 
@@ -18,4 +22,7 @@ struct Option {
     const OptionStyle style;
 
     double getPayoff(double currentAssetPrice) const;
+    friend std::ostream &operator<<(std::ostream &os, const Option &option);
 };
+
+#endif
