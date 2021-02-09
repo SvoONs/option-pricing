@@ -21,7 +21,7 @@ class AssetPriceGenerator {
 class MCSimulation {
    public:
     MCSimulation(){};
-    double getRiskFreeOptionPrice(Option &option, int nSteps, int nWalks) const;
+    double getRiskFreeOptionPrice(Option &option, int nSteps, int nPaths) const;
 };
 
 #endif

@@ -58,13 +58,13 @@ void getFairOptionPrice(Option &option) {
              << "$\n";
     } else if (model == "MCSimulation") {
         MCSimulation mcSimulation;
-        int nWalks, nSteps;
-        cout << "How many asset price walks should be simulated?\n";
-        cin >> nWalks;
-        cout << "How many steps should each price walk simulate?\n";
+        int nPaths, nSteps;
+        cout << "How many asset price paths should be simulated?\n";
+        cin >> nPaths;
+        cout << "How many steps should each price path simulate?\n";
         cin >> nSteps;
         optionPrice =
-            mcSimulation.getRiskFreeOptionPrice(option, nSteps, nWalks);
+            mcSimulation.getRiskFreeOptionPrice(option, nSteps, nPaths);
         cout << "The Monte-Carlo price of the option is: " << optionPrice
              << "$\n";
     }

@@ -1,5 +1,11 @@
 # option-pricing
 
+``option-pricing`` is an easy-to-use command line tool which allows you to determine the fair price of [options](https://en.wikipedia.org/wiki/Option_(finance)).
+Currently, two different models are implemented which can be used to determine the option price.
+
+* [Black-Scholes](https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model), which makes certain assumptions regarding the market the option is traded on and provides an analytical formula for the fair price. It can be used to price European style options, also sometimes referred to as Vanilla style options.
+* [Monte-Carlo Simulation](https://en.wikipedia.org/wiki/Monte_Carlo_methods_for_option_pricing), which allows to determine prices of more complex option types. The procedure consists of four steps: 1. simulate ``nPaths`` price paths of the underlying asset, 2. calculate the payoff for each path, 3. compute the average payoff and 4. discount the expected payoff to today.
+
 ## Building
 
 After you have successfully cloned the repository to your machine you can build the project easily by running
@@ -30,6 +36,9 @@ Alternatively, you can run a single test suite using the corresponding executabl
 ```bash
 ./TestOption
 ```
+
+## Future work (TODO)
+* add more pricing models
 
 ## Code formatting (TODO)
 ```bash
