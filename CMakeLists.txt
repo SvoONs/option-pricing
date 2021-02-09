@@ -36,6 +36,9 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
                  ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
                  EXCLUDE_FROM_ALL)
 
+# run tests with ctest
+include(CTest)
+
 ### Configure Test Suites ### 
 # add TestOption test suite
 add_executable(TestOption test/test_option.cpp include/option.h src/option.cpp)

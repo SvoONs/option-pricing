@@ -1,6 +1,9 @@
+#ifndef MC_SIMULATION_H
+#define MC_SIMULATION_H
+
 #include <random>
 #include <vector>
-#include "../include/option.h"
+#include "option.h"
 
 class AssetPriceGenerator {
    public:
@@ -20,3 +23,5 @@ class MCSimulation {
     MCSimulation(){};
     double getRiskFreeOptionPrice(Option &option, int nSteps, int nWalks) const;
 };
+
+#endif

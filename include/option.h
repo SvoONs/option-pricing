@@ -3,12 +3,12 @@
 
 #include <iostream>
 
-enum OptionRight { Call, Put };
+enum OptionRight { Call=0, Put=1 };
 
 /*
 Different option styles https://en.wikipedia.org/wiki/Option_style
 */
-enum OptionStyle { American, European };
+enum OptionStyle { American=0, European=1 };
 
 struct Option {
     Option(double assetPrice, double strikePrice, double interest, double sigma,
