@@ -35,16 +35,18 @@ std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed,
 }
 
 double MCSimulation::getRiskFreeOptionPrice(Option &option, int nSteps,
-                                        int nPaths) const {
+                                            int nPaths,
+                                            bool runAsync) const {
     double dt = option.yearsToMaturity / nSteps;
     AssetPriceGenerator priceGenerator{option.assetPrice, option.interest,
                                        option.sigma, dt};
     std::vector<std::future<std::vector<double>>> walks;
     // TODO evaluate more robust seed generation
     for (size_t i = 0; i < nPaths; i++) {
-        walks.emplace_back(std::async(std::launch::async,
-                                      &AssetPriceGenerator::generateAssetPrices,
-                                      &priceGenerator, i + 42, nSteps));
+        walks.emplace_back(
+            std::async(runAsync ? std::launch::async : std::launch::deferred,
+                       &AssetPriceGenerator::generateAssetPrices,
+                       &priceGenerator, i + 42, nSteps));
     }
 
     std::vector<double> payoffsAtMaturity;
