@@ -23,7 +23,21 @@ TEST(TestOption, TestOptionConstructors) {
     ASSERT_EQ(europeanCall.style, OptionStyle::European);
 }
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+TEST(TestOption, TestGetPayoff) {
+    Option europeanCall{
+        100.0, 105.0, 0.02, 1.0, 2.0, OptionRight::Call, OptionStyle::European};
+    Option europeanPut{
+        100.0, 105.0, 0.02, 1.0, 2.0, OptionRight::Put, OptionStyle::European};
+
+    double assetPriceT1 = 100.0;
+    ASSERT_EQ(europeanCall.getPayoff(assetPriceT1), 0.0);
+    ASSERT_EQ(europeanPut.getPayoff(assetPriceT1), 5.0);
+
+    double assetPriceT2 = 110.0;
+    ASSERT_EQ(europeanCall.getPayoff(assetPriceT2), 5.0);
+    ASSERT_EQ(europeanPut.getPayoff(assetPriceT2), 0.0);
+
+    double assetPriceT3 = 105.0;
+    ASSERT_EQ(europeanCall.getPayoff(assetPriceT3), 0.0);
+    ASSERT_EQ(europeanPut.getPayoff(assetPriceT3), 0.0);
 }
