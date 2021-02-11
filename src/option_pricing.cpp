@@ -7,50 +7,67 @@ using std::cout;
 
 void welcomeUser() {
     cout << "Hello fellow investor and welcome to "
-            "OptionPricing! \U0001F4B0\nOptionPricing is a command line application "
+            "OptionPricing! \U0001F4B0\nOptionPricing is a command line "
+            "application "
             "to determine fair prices of options.\nCurrently supported are "
-            "European and American stock options\n";
+            "European and American stock options.\nThe implemented underlying "
+            "pricing "
+            "models rely on the Black-Scholes theory, see "
+            "https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model for "
+            "further information";
 }
 
 Option getOptionFromUserInput() {
-    cout << "\nFirst, provide the details of the option you would like to price.";
+    cout << "\nFirst, provide the details of the option you would like to "
+            "price.";
     double assetPrice, strikePrice, interest, volatility, yearsToMaturity;
     std::string style, right;
-    cout << "\nCurrent asset price: ";
+    cout << "\nCurrent asset price in $: ";
     cin >> assetPrice;
-    cout << "Strike price: ";
+    cout << "Strike price in $: ";
     cin >> strikePrice;
-    cout << "Interest rate: ";
+    cout << "Risk free interest rate in %: ";
     cin >> interest;
-    cout << "Volatility: ";
+    cout << "Volatility in %: ";
     cin >> volatility;
     cout << "Years to maturity: ";
     cin >> yearsToMaturity;
-    cout << "Option right (valid are 'Call'[0] and 'Put'[1]): ";
+    cout << "Option right (valid are 'Call'[C] and 'Put'[P]): ";
     cin >> right;
-    cout << "Option style (valid are 'American'[0] and 'European'[1]): ";
+    cout << "Option style (valid are 'American'[A] and 'European'[E]): ";
     cin >> style;
 
-    Option option{
-        assetPrice,
-        strikePrice,
-        interest,
-        volatility,
-        yearsToMaturity,
-        right == "Call" ? OptionRight::Call : OptionRight::Put,
-        style == "American" ? OptionStyle::American : OptionStyle::European};
+    Option option{assetPrice,
+                  strikePrice,
+                  interest / 100,
+                  volatility / 100,
+                  yearsToMaturity,
+                  right == "Call" or "C" ? OptionRight::Call : OptionRight::Put,
+                  style == "American" or "A" ? OptionStyle::American
+                                             : OptionStyle::European};
     cout << "\U0001F389 Successfully initialised " << option;
     return option;
 }
 
-void getFairOptionPrice(Option &option) {
-    cout << "\nNext, choose how the fair option price should be "
-            "determined.\nCurrently available models are 'BlackScholes' for "
-            "European style options\n or 'MCSimulation' for American and "
-            "European style derivates.\n";
-    cout << "Model: ";
+std::string getModel(Option &option) {
+    cout << "\nNext, choose which model should be used to determine the fair "
+            "option price.";
     std::string model;
-    cin >> model;
+    if (option.style == OptionStyle::American) {
+        cout << "\nSince you are pricing an American style option, the only "
+                "currently available model is Monte Carlo Simulation";
+        model = "MCSimulation";
+    } else {
+        cout << "\nCurrently available models are 'BlackScholes' for "
+                "European style options\n or 'MCSimulation' for American and "
+                "European style derivates.\n";
+        cout << "Model: ";
+        cin >> model;
+    }
+    return model;
+}
+
+void getFairOptionPrice(Option &option, std::string model) {
     double optionPrice;
     if (model == "BlackScholes") {
         optionPrice = BlackScholesPrice(option);
@@ -58,14 +75,15 @@ void getFairOptionPrice(Option &option) {
              << "$\n";
     } else if (model == "MCSimulation") {
         MCSimulation mcSimulation;
+
         int nPaths, nSteps;
-        cout << "How many asset price paths should be simulated?\n";
+        cout << "\n# of asset price paths to simulate: ";
         cin >> nPaths;
-        cout << "How many steps should each price path simulate?\n";
+        cout << "\n# of timesteps in each path: ";
         cin >> nSteps;
         optionPrice =
             mcSimulation.getRiskFreeOptionPrice(option, nSteps, nPaths);
-        cout << "The Monte-Carlo price of the option is: " << optionPrice
+        cout << "\nThe Monte-Carlo price of the option is: " << optionPrice
              << "$\n";
     }
 }
@@ -73,6 +91,7 @@ void getFairOptionPrice(Option &option) {
 int main() {
     welcomeUser();
     Option option = getOptionFromUserInput();
-    getFairOptionPrice(option);
+    std::string model = getModel(option);
+    getFairOptionPrice(option, model);
     return 0;
 }
