@@ -40,3 +40,17 @@ TEST(TestMCSimulation, TestMCSimulationEuropeanPut) {
     // TODO why is the diff so high?
     ASSERT_NEAR(mcValueEC, 5.8462, 0.5);
 }
+
+
+TEST(TestMCSimulation, TestMCSimulationAmericanPut) {
+    double assetPrice = 36, strikePrice = 40, interest = 0.06, volatility = 0.2,
+           T = 1;
+    Option americanPut{assetPrice,           strikePrice, interest,
+                       volatility,           T,           OptionRight::Put,
+                       OptionStyle::American};
+    MCSimulation simulator;
+    int nSteps = 10, nPaths = 10; // 50 | 1000
+    double mcValueAP =
+        simulator.getRiskFreeOptionPrice(americanPut, nSteps, nPaths);
+    ASSERT_NEAR(mcValueAP, 4.545, 0.1);
+}

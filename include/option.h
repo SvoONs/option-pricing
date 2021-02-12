@@ -3,12 +3,12 @@
 
 #include <iostream>
 
-enum OptionRight { Call=0, Put=1 };
+enum OptionRight { Call = 0, Put = 1 };
 
 /*
 Different option styles https://en.wikipedia.org/wiki/Option_style
 */
-enum OptionStyle { American=0, European=1 };
+enum OptionStyle { American = 0, European = 1 };
 
 struct Option {
     Option(double assetPrice, double strikePrice, double interest, double sigma,
@@ -21,7 +21,7 @@ struct Option {
     const OptionRight right;
     const OptionStyle style;
 
-    double getPayoff(double currentAssetPrice) const;
+    double getPayout(double currentAssetPrice) const;
     friend std::ostream &operator<<(std::ostream &os, const Option &option);
 };
 

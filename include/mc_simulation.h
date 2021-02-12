@@ -3,6 +3,7 @@
 
 #include <random>
 #include <vector>
+#include "Eigen/Core"
 #include "option.h"
 
 class AssetPriceGenerator {
@@ -22,6 +23,11 @@ class MCSimulation {
    public:
     MCSimulation(){};
     double getRiskFreeOptionPrice(Option &option, int nSteps, int nPaths) const;
+
+   private:
+    double backTraceOptionPrice(Option &option,
+                                Eigen::MatrixXd &simulatedAssetPrices,
+                                double dt) const;
 };
 
 #endif

@@ -12,7 +12,7 @@ Option::Option(double assetPrice, double strikePrice, double interest,
       right(right),
       style(style) {}
 
-double Option::getPayoff(double currentAssetPrice) const {
+double Option::getPayout(double currentAssetPrice) const {
     double payoff;
     if (right == OptionRight::Call) {
         payoff = std::max(currentAssetPrice - this->strikePrice, 0.0);
@@ -29,7 +29,7 @@ std::ostream &operator<<(std::ostream &os, const Option &option) {
        << "asset price: " << option.assetPrice << "$"
        << ", strike: " << option.strikePrice << "$"
        << ", interest: " << option.interest * 100 << "%"
-       << ", volatility: " << option.sigma
-       << ", maturity: " << option.yearsToMaturity << " year(s)\n";
+       << ", volatility: " << option.sigma * 100 << "%"
+       << ", maturity: " << option.yearsToMaturity << " years\n";
     return os;
 }

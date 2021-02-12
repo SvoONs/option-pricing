@@ -30,14 +30,14 @@ TEST(TestOption, TestGetPayoff) {
         100.0, 105.0, 0.02, 1.0, 2.0, OptionRight::Put, OptionStyle::European};
 
     double assetPriceT1 = 100.0;
-    ASSERT_EQ(europeanCall.getPayoff(assetPriceT1), 0.0);
-    ASSERT_EQ(europeanPut.getPayoff(assetPriceT1), 5.0);
+    ASSERT_EQ(europeanCall.getPayout(assetPriceT1), 0.0);
+    ASSERT_EQ(europeanPut.getPayout(assetPriceT1), 5.0);
 
     double assetPriceT2 = 110.0;
-    ASSERT_EQ(europeanCall.getPayoff(assetPriceT2), 5.0);
-    ASSERT_EQ(europeanPut.getPayoff(assetPriceT2), 0.0);
+    ASSERT_EQ(europeanCall.getPayout(assetPriceT2), 5.0);
+    ASSERT_EQ(europeanPut.getPayout(assetPriceT2), 0.0);
 
     double assetPriceT3 = 105.0;
-    ASSERT_EQ(europeanCall.getPayoff(assetPriceT3), 0.0);
-    ASSERT_EQ(europeanPut.getPayoff(assetPriceT3), 0.0);
+    ASSERT_EQ(europeanCall.getPayout(assetPriceT3), 0.0);
+    ASSERT_EQ(europeanPut.getPayout(assetPriceT3), 0.0);
 }
