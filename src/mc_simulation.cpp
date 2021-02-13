@@ -19,7 +19,8 @@ double AssetPriceGenerator::randomWalk(double prevAssetPrice,
     return newAssetPrice;
 }
 
-std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed, int nSteps) const {
+std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed,
+                                                             int nSteps) const {
     std::mt19937 generator(seed);
     std::normal_distribution<double> norm(0, 1.0);
 
@@ -36,27 +37,43 @@ std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed, int nStep
 double MCSimulation::backTraceOptionPrice(Option &option,
                                           Eigen::MatrixXd &simulatedAssetPrices,
                                           double dt) const {
+    int m=simulatedAssetPrices.rows(), n = simulatedAssetPrices.cols();
     //
-    auto payoutLambda = [option](double &price) {
+    auto payoutLambda = [option](const double &price) {
         return option.getPayout(price);
     };
-    auto earlyExercise = [](double price) { return price > 0 ? 1 : 0; };
-    std::cout << dt;
+    auto inTheMoney = [](double payout) { return payout > 0.0 ? 1 : 0; };
     // initialize zero-matrix holding strategy of early exercise
-    Eigen::MatrixXi strategyMatrix = Eigen::ArrayXXi::Zero(
-        simulatedAssetPrices.rows(), simulatedAssetPrices.cols());
+    Eigen::MatrixXi strategyMatrix = Eigen::ArrayXXi::Zero(m, n);
     // initialize zero-matrix holding cashflows for early exercise options
-    Eigen::MatrixXd cashflowMatrix = Eigen::ArrayXXd::Zero(
-        simulatedAssetPrices.rows(), simulatedAssetPrices.cols());
-    cashflowMatrix.rightCols(1) =
-    cashflowMatrix.rightCols(1).unaryExpr(&payoutLambda);
-    // strategyMatrix.rightCols(1) =
-    // cashflowMatrix.rightCols(1).unaryExpr(&earlyExercise);
-    for (size_t i = simulatedAssetPrices.cols()-1; i >= 0; i--) {
-        // determine payout of option with "current" asset prices
+    Eigen::MatrixXd cashflowMatrix = Eigen::ArrayXXd::Zero(m, n);
 
-        auto assetPrices = simulatedAssetPrices.col(i);
-        //auto payouts = assetPrices.unaryExpr(&payoutLambda);
+    // determine cashflow and strategy at maturity
+    cashflowMatrix.col(n-1) =
+        simulatedAssetPrices.col(n-1).unaryExpr(payoutLambda);
+    ;
+    strategyMatrix.col(n-1) =
+        cashflowMatrix.col(n-1).unaryExpr(inTheMoney);
+    // backpropagate to present
+    for (int j = 1; j < n-1; ++j) {
+        // determine payouts of option with "current" asset prices
+        auto assetPrices = simulatedAssetPrices.col(n-1-j);
+        Eigen::VectorXd payouts = assetPrices.unaryExpr(payoutLambda);
+        int nCol = 0;
+        std::vector<double> X, y;
+        // collect scenarios in-the-money
+        for (int i = 0; i < m; i++)
+        {
+            double payout = payouts(i);
+            if (payout > 0) {
+                X.push_back(assetPrices(i));
+                nCol++;
+                discountValue(payout, option.interest, j*dt);
+                std::cout << payout << std::endl;
+                y.push_back(payout);
+            }
+        }
+                
     }
     return 0.0;
 }
@@ -96,7 +113,8 @@ double MCSimulation::getRiskFreeOptionPrice(Option &option, int nSteps,
         int cnt = 0;
         for (auto &&path : paths) {
             std::vector<double> pathPrices = path.get();
-            auto row = Eigen::Map<Eigen::RowVectorXd>(pathPrices.data(), nSteps);
+            auto row =
+                Eigen::Map<Eigen::RowVectorXd>(pathPrices.data(), nSteps);
             assetPrices.row(cnt) = row;
             cnt++;
         }
