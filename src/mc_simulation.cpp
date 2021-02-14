@@ -60,20 +60,22 @@ double MCSimulation::backTraceOptionPrice(Option &option,
         auto assetPrices = simulatedAssetPrices.col(n-1-j);
         Eigen::VectorXd payouts = assetPrices.unaryExpr(payoutLambda);
         int nCol = 0;
-        std::vector<double> X, y;
+        std::vector<double> XRaw, yRaw;
         // collect scenarios in-the-money
         for (int i = 0; i < m; i++)
         {
             double payout = payouts(i);
             if (payout > 0) {
-                X.push_back(assetPrices(i));
-                nCol++;
+                XRaw.push_back(assetPrices(i));
                 discountValue(payout, option.interest, j*dt);
-                std::cout << payout << std::endl;
-                y.push_back(payout);
+                yRaw.push_back(payout);
+                nCol++;
             }
         }
-                
+        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(XRaw.data(), XRaw.size());
+        Eigen::VectorXd y = Eigen::Map<Eigen::VectorXd>(yRaw.data(), yRaw.size());
+        std::cout << X << std::endl;
+        Eigen::Vector3d betas = quadraticRegression(X,y);
     }
     return 0.0;
 }
