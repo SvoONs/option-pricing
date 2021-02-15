@@ -1,5 +1,6 @@
 #include <cmath>
 #include "../include/utils.h"
+#include <iostream>
 
 void discountValue(double &value, double discFactor, double t) {
     value *= std::exp(-discFactor * t);
@@ -13,8 +14,7 @@ double normalCDF(double x) {
 }
 
 Eigen::Vector3d quadraticRegression(Eigen::VectorXd &X, Eigen::VectorXd &y) {
-    int n = X.cols();
-    Eigen::MatrixXd XMat = Eigen::ArrayXd::Ones(n, 3);
+    Eigen::MatrixXd XMat = Eigen::ArrayXXd::Ones(X.size(), 3);
     XMat.col(1) = X;
     XMat.col(2) = X.array().square();
     Eigen::MatrixXd XMatTmp = (X.transpose()*X).inverse()*X.transpose();

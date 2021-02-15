@@ -74,7 +74,6 @@ double MCSimulation::backTraceOptionPrice(Option &option,
         }
         Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(XRaw.data(), XRaw.size());
         Eigen::VectorXd y = Eigen::Map<Eigen::VectorXd>(yRaw.data(), yRaw.size());
-        std::cout << X << std::endl;
         Eigen::Vector3d betas = quadraticRegression(X,y);
     }
     return 0.0;
