@@ -37,7 +37,7 @@ std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed,
 double MCSimulation::backTraceOptionPrice(Option &option,
                                           Eigen::MatrixXd &simulatedAssetPrices,
                                           double dt) const {
-    int m=simulatedAssetPrices.rows(), n = simulatedAssetPrices.cols();
+    int m = simulatedAssetPrices.rows(), n = simulatedAssetPrices.cols();
     //
     auto payoutLambda = [option](const double &price) {
         return option.getPayout(price);
@@ -49,32 +49,43 @@ double MCSimulation::backTraceOptionPrice(Option &option,
     Eigen::MatrixXd cashflowMatrix = Eigen::ArrayXXd::Zero(m, n);
 
     // determine cashflow and strategy at maturity
-    cashflowMatrix.col(n-1) =
-        simulatedAssetPrices.col(n-1).unaryExpr(payoutLambda);
+    cashflowMatrix.col(n - 1) =
+        simulatedAssetPrices.col(n - 1).unaryExpr(payoutLambda);
     ;
-    strategyMatrix.col(n-1) =
-        cashflowMatrix.col(n-1).unaryExpr(inTheMoney);
+    strategyMatrix.col(n - 1) = cashflowMatrix.col(n - 1).unaryExpr(inTheMoney);
     // backpropagate to present
-    for (int j = 1; j < n-1; ++j) {
+    for (int j = 1; j < n - 1; ++j) {
         // determine payouts of option with "current" asset prices
-        auto assetPrices = simulatedAssetPrices.col(n-1-j);
+        auto assetPrices = simulatedAssetPrices.col(n - 1 - j);
         Eigen::VectorXd payouts = assetPrices.unaryExpr(payoutLambda);
         int nCol = 0;
-        std::vector<double> XRaw, yRaw;
+        std::vector<double> XRaw, yRaw, XIntrinsic;
         // collect scenarios in-the-money
-        for (int i = 0; i < m; i++)
-        {
-            double payout = payouts(i);
-            if (payout > 0) {
-                XRaw.push_back(assetPrices(i));
-                discountValue(payout, option.interest, j*dt);
-                yRaw.push_back(payout);
+        for (int i = 0; i < m; i++) {
+            if (payouts(i) > 0) {
+                XRaw.push_back(simulatedAssetPrices(i, n - 1 - j));
+                // FIXME this must consider the cashflow where it occurs (not
+                // necessarily in the "next" period)
+                double futureCashflow = cashflowMatrix(i, n - j);
+                discountValue(futureCashflow, option.interest, j * dt);
+                yRaw.push_back(futureCashflow);
+                XIntrinsic.push_back(simulatedAssetPrices(i, n - 1 - j));
                 nCol++;
             }
+            XIntrinsic.push_back(0.0);
         }
-        Eigen::VectorXd X = Eigen::Map<Eigen::VectorXd>(XRaw.data(), XRaw.size());
-        Eigen::VectorXd y = Eigen::Map<Eigen::VectorXd>(yRaw.data(), yRaw.size());
-        Eigen::Vector3d betas = quadraticRegression(X,y);
+        Eigen::VectorXd X =
+            Eigen::Map<Eigen::VectorXd>(XRaw.data(), XRaw.size());
+        Eigen::VectorXd y =
+            Eigen::Map<Eigen::VectorXd>(yRaw.data(), yRaw.size());
+        Eigen::VectorXd XPred =
+            Eigen::Map<Eigen::VectorXd>(XIntrinsic.data(), XIntrinsic.size());
+        Eigen::Vector3d betas = fitQuadraticRegression(X, y);
+        Eigen::VectorXd expectedCashflow =
+            predictQuadraticRegression(XPred, betas);
+        // TODO: determine strategy based on expected cashflow and early
+        // exercise payout
+        // TODO: update strategy & cashflow matrix accordingly
     }
     return 0.0;
 }
