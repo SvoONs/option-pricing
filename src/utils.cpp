@@ -17,6 +17,5 @@ Eigen::Vector3d quadraticRegression(Eigen::VectorXd &X, Eigen::VectorXd &y) {
     Eigen::MatrixXd XMat = Eigen::ArrayXXd::Ones(X.size(), 3);
     XMat.col(1) = X;
     XMat.col(2) = X.array().square();
-    Eigen::MatrixXd XMatTmp = (X.transpose()*X).inverse()*X.transpose();
-    return XMatTmp*y;
+    return (XMat.transpose()*XMat).inverse()*XMat.transpose()*y;
 }
