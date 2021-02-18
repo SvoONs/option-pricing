@@ -85,6 +85,16 @@ double MCSimulation::backTraceOptionPrice(Option &option,
             predictQuadraticRegression(XPred, betas);
         // TODO: determine strategy based on expected cashflow and early
         // exercise payout
+        for (int i = 0; i < m; i++)
+        {
+            if (XPred(i)>expectedCashflow(i))
+            {
+                strategyMatrix(i,n-j-1) = 1;
+                cashflowMatrix(i,n-j-1) = XPred(i);
+                
+            }            
+        }
+        
         // TODO: update strategy & cashflow matrix accordingly
     }
     return 0.0;
