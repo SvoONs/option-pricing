@@ -48,56 +48,80 @@ double MCSimulation::backTraceOptionPrice(Option &option,
     // initialize zero-matrix holding cashflows for early exercise options
     Eigen::MatrixXd cashflowMatrix = Eigen::ArrayXXd::Zero(m, n);
 
+    // std::cout << "--AssetPrices--\n";
+    // std::cout << simulatedAssetPrices << std::endl;
+
     // determine cashflow and strategy at maturity
     cashflowMatrix.col(n - 1) =
         simulatedAssetPrices.col(n - 1).unaryExpr(payoutLambda);
-    ;
-    strategyMatrix.col(n - 1) = cashflowMatrix.col(n - 1).unaryExpr(inTheMoney);
+    strategyMatrix.col(n - 1) =
+        cashflowMatrix.col(n - 1).unaryExpr(inTheMoney).cast<int>();
+    // std::cout << "--Strategy--\n";
+    // std::cout << strategyMatrix << std::endl;
+    // std::cout << "--Cashflow--\n";
+    // std::cout << cashflowMatrix << std::endl;
+    std::cout << "before backtracing loop\n";
     // backpropagate to present
-    for (int j = 1; j < n - 1; ++j) {
+    for (int j = 1; j <= n - 1; ++j) {
         // determine payouts of option with "current" asset prices
-        auto assetPrices = simulatedAssetPrices.col(n - 1 - j);
-        Eigen::VectorXd payouts = assetPrices.unaryExpr(payoutLambda);
-        int nCol = 0;
-        std::vector<double> XRaw, yRaw, XIntrinsic;
+        Eigen::VectorXd assetPrices = simulatedAssetPrices.col(n - 1 - j);
+        Eigen::VectorXd IntrinsicValues = assetPrices.unaryExpr(payoutLambda);
+        std::vector<double> XRaw, yRaw, InTheMoneyIdx;
         // collect scenarios in-the-money
+        std::cout << "before collecting in-the-money scenarios loop\n";
         for (int i = 0; i < m; i++) {
-            if (payouts(i) > 0) {
+            if (IntrinsicValues(i) > 0) {
                 XRaw.push_back(simulatedAssetPrices(i, n - 1 - j));
-                // FIXME this must consider the cashflow where it occurs (not
-                // necessarily in the "next" period)
-                double futureCashflow = cashflowMatrix(i, n - j);
-                discountValue(futureCashflow, option.interest, j * dt);
+                InTheMoneyIdx.push_back(i);
+                // Find index and value of future cashflow > 0
+                Eigen::MatrixXf::Index cashflowIdx;
+                double futureCashflow =
+                    cashflowMatrix(i, Eigen::seq(n - j, Eigen::last))
+                        .maxCoeff(&cashflowIdx);
+                // discount cashflow depending how far into the future it occurs
+                discountValue(futureCashflow, option.interest,
+                              (cashflowIdx + 1) * dt);
                 yRaw.push_back(futureCashflow);
-                XIntrinsic.push_back(simulatedAssetPrices(i, n - 1 - j));
-                nCol++;
             }
-            XIntrinsic.push_back(0.0);
         }
         Eigen::VectorXd X =
             Eigen::Map<Eigen::VectorXd>(XRaw.data(), XRaw.size());
         Eigen::VectorXd y =
             Eigen::Map<Eigen::VectorXd>(yRaw.data(), yRaw.size());
-        Eigen::VectorXd XPred =
-            Eigen::Map<Eigen::VectorXd>(XIntrinsic.data(), XIntrinsic.size());
         Eigen::Vector3d betas = fitQuadraticRegression(X, y);
-        Eigen::VectorXd expectedCashflow =
-            predictQuadraticRegression(XPred, betas);
-        // TODO: determine strategy based on expected cashflow and early
-        // exercise payout
-        for (int i = 0; i < m; i++)
-        {
-            if (XPred(i)>expectedCashflow(i))
-            {
-                strategyMatrix(i,n-j-1) = 1;
-                cashflowMatrix(i,n-j-1) = XPred(i);
-                
-            }            
+        Eigen::VectorXd expectedCashflow = predictQuadraticRegression(assetPrices, betas);
+        // FIXME: set expected Cashflow to 0 for paths not-in-the-money
+        std::cout << "before evaluate early exercise loop\n";
+        for (int i = 0; i < m; i++) {
+            // evaluate early exercise
+            std::cout << "i=" << i << "\n";
+            if (IntrinsicValues(i) > expectedCashflow(i)) {
+                std::cout << "inside early exercise loop if-clause, iteration " << i << "\n";
+                strategyMatrix(i, n - j - 1) = 1;
+                cashflowMatrix(i, n - j - 1) = IntrinsicValues(i);
+                // update past entries
+                strategyMatrix(i, Eigen::seq(n - j, Eigen::last)).setZero();
+                cashflowMatrix(i, Eigen::seq(n - j, Eigen::last)).setZero();
+            }
         }
-        
-        // TODO: update strategy & cashflow matrix accordingly
+        // std::cout << "--Strategy--\n";
+        // std::cout << strategyMatrix << std::endl;
+        // std::cout << "--Cashflow--\n";
+        // std::cout << cashflowMatrix << std::endl;
     }
-    return 0.0;
+    // TODO: discount cashflows and return mean values as option price
+    std::cout << "before discount cashflows loop\n";
+    std::vector<double> discountedCashflows;
+    for (int i = 0; i < m; i++) {
+        Eigen::MatrixXf::Index idx;
+        double cashflow = cashflowMatrix.row(i).maxCoeff(&idx);
+        discountValue(cashflow, option.interest, idx * dt);
+        discountedCashflows.push_back(cashflow);
+    }
+    return std::accumulate(discountedCashflows.begin(),
+                           discountedCashflows.end(),
+                           decltype(discountedCashflows)::value_type(0)) /
+           discountedCashflows.size();
 }
 
 double MCSimulation::getRiskFreeOptionPrice(Option &option, int nSteps,
