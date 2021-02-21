@@ -2,8 +2,7 @@
 #include "../include/black_scholes.h"
 #include "../include/mc_simulation.h"
 
-using std::cin;
-using std::cout;
+using namespace std;
 
 void welcomeUser() {
     cout << "Hello fellow investor and welcome to "
@@ -21,7 +20,7 @@ Option getOptionFromUserInput() {
     cout << "\nFirst, provide the details of the option you would like to "
             "price.";
     double assetPrice, strikePrice, interest, volatility, yearsToMaturity;
-    std::string style, right;
+    string style, right;
     cout << "\nCurrent asset price in $: ";
     cin >> assetPrice;
     cout << "Strike price in $: ";
@@ -37,22 +36,23 @@ Option getOptionFromUserInput() {
     cout << "Option style (valid are 'American'[A] and 'European'[E]): ";
     cin >> style;
 
-    Option option{assetPrice,
-                  strikePrice,
-                  interest / 100,
-                  volatility / 100,
-                  yearsToMaturity,
-                  right == "Call" or "C" ? OptionRight::Call : OptionRight::Put,
-                  style == "American" or "A" ? OptionStyle::American
-                                             : OptionStyle::European};
+    Option option{
+        assetPrice,
+        strikePrice,
+        interest / 100,
+        volatility / 100,
+        yearsToMaturity,
+        right == string{"Call"} ? OptionRight::Call : OptionRight::Put,
+        style == string{"American"} ? OptionStyle::American
+                                    : OptionStyle::European};
     cout << "\U0001F389 Successfully initialised " << option;
     return option;
 }
 
-std::string getModel(Option &option) {
+string getModel(Option &option) {
     cout << "\nNext, choose which model should be used to determine the fair "
             "option price.";
-    std::string model;
+    string model;
     if (option.style == OptionStyle::American) {
         cout << "\nSince you are pricing an American style option, the only "
                 "currently available model is Monte Carlo Simulation";
@@ -67,7 +67,7 @@ std::string getModel(Option &option) {
     return model;
 }
 
-void getFairOptionPrice(Option &option, std::string model) {
+void getFairOptionPrice(Option &option, string model) {
     double optionPrice;
     if (model == "BlackScholes") {
         optionPrice = BlackScholesPrice(option);
@@ -91,7 +91,7 @@ void getFairOptionPrice(Option &option, std::string model) {
 int main() {
     welcomeUser();
     Option option = getOptionFromUserInput();
-    std::string model = getModel(option);
+    string model = getModel(option);
     getFairOptionPrice(option, model);
     return 0;
 }
