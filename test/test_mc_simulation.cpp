@@ -49,8 +49,8 @@ TEST(TestMCSimulation, TestMCSimulationAmericanPut) {
                        volatility,           T,           OptionRight::Put,
                        OptionStyle::American};
     MCSimulation simulator;
-    int nSteps = 10, nPaths = 10; // 50 | 1000
+    int nSteps = 50, nPaths = 1000;
     double mcValueAP =
         simulator.getRiskFreeOptionPrice(americanPut, nSteps, nPaths);
-    ASSERT_NEAR(mcValueAP, 4.545, 0.1);
+    ASSERT_NEAR(mcValueAP, 4.545, 0.2);
 }
