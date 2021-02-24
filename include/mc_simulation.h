@@ -25,7 +25,7 @@ class MCSimulation {
     double getRiskFreeOptionPrice(Option &option, int nSteps, int nPaths) const;
 
    private:
-    double backTraceOptionPrice(Option &option,
+    double evaluateEarlyExerciseOption(Option &option,
                                 Eigen::MatrixXd &simulatedAssetPrices,
                                 double dt) const;
 };

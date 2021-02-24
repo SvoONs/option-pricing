@@ -34,7 +34,7 @@ std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed,
     return assetPrices;
 }
 
-double MCSimulation::backTraceOptionPrice(Option &option,
+double MCSimulation::evaluateEarlyExerciseOption(Option &option,
                                           Eigen::MatrixXd &simulatedAssetPrices,
                                           double dt) const {
     int m = simulatedAssetPrices.rows(), n = simulatedAssetPrices.cols();
@@ -146,7 +146,7 @@ double MCSimulation::getRiskFreeOptionPrice(Option &option, int nSteps,
             assetPrices.row(cnt) = row;
             cnt++;
         }
-        optionPrice = backTraceOptionPrice(option, assetPrices, dt);
+        optionPrice = evaluateEarlyExerciseOption(option, assetPrices, dt);
     }
     return optionPrice;
 }
