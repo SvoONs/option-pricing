@@ -9,42 +9,63 @@ void welcomeUser() {
             "OptionPricing! \U0001F4B0\nOptionPricing is a command line "
             "application "
             "to determine fair prices of options.\nCurrently supported are "
-            "European and American stock options.\nThe implemented underlying "
-            "pricing "
-            "models rely on the Black-Scholes theory, see "
-            "https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model for "
-            "further information";
+            "European and American stock options.\n";
 }
 
 Option getOptionFromUserInput() {
     cout << "\nFirst, provide the details of the option you would like to "
-            "price.";
+            "price.\n";
     double assetPrice, strikePrice, interest, volatility, yearsToMaturity;
     string style, right;
-    cout << "\nCurrent asset price in $: ";
+    cout << "Current asset price in $: ";
     cin >> assetPrice;
+    while (assetPrice < 0) {
+        cout << "The asset price can not be negative.\nCurrent asset price in "
+                "$: ";
+        cin >> assetPrice;
+    }
     cout << "Strike price in $: ";
     cin >> strikePrice;
+    while (strikePrice < 0) {
+        cout << "The strike price can not be negative.\nStrike price in $: ";
+        cin >> strikePrice;
+    }
     cout << "Risk free interest rate in %: ";
     cin >> interest;
+    while (interest < 0 || interest > 100) {
+        cout << "The interest rate must be between 0 and 100%.\nRisk free "
+                "interest rate in %: ";
+        cin >> interest;
+    }
     cout << "Volatility in %: ";
     cin >> volatility;
+    while (volatility < 0 || volatility > 100) {
+        cout << "The volatility must be between 0 and 100%.\nVolatility in %: ";
+        cin >> volatility;
+    }
     cout << "Years to maturity: ";
     cin >> yearsToMaturity;
-    cout << "Option right (valid are 'Call'[C] and 'Put'[P]): ";
+    while (yearsToMaturity < 0) {
+        cout << "Years to maturity must be a positive decimal value.\nYears to "
+                "maturity: ";
+        cin >> yearsToMaturity;
+    }
+    cout << "Option right (supported are 'Call'/'C' and 'Put'/'P'): ";
     cin >> right;
-    cout << "Option style (valid are 'American'[A] and 'European'[E]): ";
+    cout << "Option style (supported are 'American'/'A' and 'European'/'E'): ";
     cin >> style;
 
-    Option option{
-        assetPrice,
-        strikePrice,
-        interest / 100,
-        volatility / 100,
-        yearsToMaturity,
-        right == string{"Call"} ? OptionRight::Call : OptionRight::Put,
-        style == string{"American"} ? OptionStyle::American
-                                    : OptionStyle::European};
+    Option option{assetPrice,
+                  strikePrice,
+                  interest / 100,
+                  volatility / 100,
+                  yearsToMaturity,
+                  right == string{"Call"} || right == string{"C"}
+                      ? OptionRight::Call
+                      : OptionRight::Put,
+                  style == string{"American"} || style == string{"A"}
+                      ? OptionStyle::American
+                      : OptionStyle::European};
     cout << "\U0001F389 Successfully initialised " << option;
     return option;
 }
@@ -58,8 +79,9 @@ string getModel(Option &option) {
                 "currently available model is Monte Carlo Simulation";
         model = "MCSimulation";
     } else {
-        cout << "\nCurrently available models are 'BlackScholes' for "
-                "European style options\n or 'MCSimulation' for American and "
+        cout << "\nCurrently available models are 'BlackScholes'/'BS' for "
+                "European style options\n or 'MCSimulation'/'MC' for American "
+                "and "
                 "European style derivates.\n";
         cout << "Model: ";
         cin >> model;
@@ -69,11 +91,11 @@ string getModel(Option &option) {
 
 void getFairOptionPrice(Option &option, string model) {
     double optionPrice;
-    if (model == "BlackScholes") {
+    if (model == "BlackScholes" || model == "BS") {
         optionPrice = BlackScholesPrice(option);
-        cout << "The Black-Scholes price of the option is: " << optionPrice
+        cout << "\nThe Black-Scholes price of the option is: " << optionPrice
              << "$\n";
-    } else if (model == "MCSimulation") {
+    } else if (model == "MCSimulation" || model == "MC") {
         MCSimulation mcSimulation;
 
         int nPaths, nSteps;
