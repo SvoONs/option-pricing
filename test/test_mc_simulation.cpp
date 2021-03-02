@@ -21,7 +21,7 @@ TEST(TestMCSimulation, TestMCSimulationEuropeanCall) {
                         volatility,           T,           OptionRight::Call,
                         OptionStyle::European};
     MCSimulation simulator;
-    int nSteps = 90, nPaths = 1000;
+    int nSteps = 50, nPaths = 1000;
     double mcValueEC =
         simulator.getRiskFreeOptionPrice(europeanCall, nSteps, nPaths);
     ASSERT_NEAR(mcValueEC, 2.1334, 0.02);
@@ -34,11 +34,10 @@ TEST(TestMCSimulation, TestMCSimulationEuropeanPut) {
                        volatility,           T,           OptionRight::Put,
                        OptionStyle::European};
     MCSimulation simulator;
-    int nSteps = 90, nPaths = 1000;
+    int nSteps = 50, nPaths = 1000;
     double mcValueEC =
         simulator.getRiskFreeOptionPrice(europeanPut, nSteps, nPaths);
-    // TODO why is the diff so high?
-    ASSERT_NEAR(mcValueEC, 5.8462, 0.5);
+    ASSERT_NEAR(mcValueEC, 5.8462, 0.2);
 }
 
 
