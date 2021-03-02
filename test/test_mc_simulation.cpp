@@ -51,5 +51,5 @@ TEST(TestMCSimulation, TestMCSimulationAmericanPut) {
     int nSteps = 50, nPaths = 1000;
     double mcValueAP =
         simulator.getRiskFreeOptionPrice(americanPut, nSteps, nPaths);
-    ASSERT_NEAR(mcValueAP, 4.545, 0.2);
+    ASSERT_NEAR(mcValueAP, 4.472, 0.2);
 }
