@@ -65,10 +65,10 @@ This project is developed as part of the Udacity C++ Nanodegree programm. It add
 
 __Loops, Functions, I/O:__
 * The project demonstrates an understanding of C++ functions and control structures:
-    * while-loops: src/option_pricing.cpp, line 22, 29, 35, 42, 48
+    * while-loops: src/option_pricing.cpp, line 22, 29, 35, 42, 48, ...
     * for-loops: src/mc_simulation.cpp, line 30, 56, 62, ...
     * if-clauses: src/mc_simulation.cpp, line 63, 87, 123, 137
-* The project accepts user input and processes the input: src/option_pricing.cpp, line 15, 73
+* The project accepts user input and processes the input: src/option_pricing.cpp, line 15, 84
 
 __Object Oriented Programming:__
 * The project uses Object Oriented Programming techniques: src/option.cpp, line 4

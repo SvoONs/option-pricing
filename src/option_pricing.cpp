@@ -52,8 +52,18 @@ Option getOptionFromUserInput() {
     }
     cout << "Option right (supported are 'Call'/'C' and 'Put'/'P'): ";
     cin >> right;
+    while (!(right == string{"Call"} || right == string{"C"} || right == string{"Put"} || right == string{"P"}))
+    {
+        cout << "Option right must be one of 'Call'/'C' or 'Put'/'P')\nOption right: ";
+        cin >> right;
+    }   
     cout << "Option style (supported are 'American'/'A' and 'European'/'E'): ";
     cin >> style;
+    while (!(style == string{"American"} || style == string{"A"} || style == string{"European"} || style == string{"E"}))
+    {
+        cout << "Option style must be one of 'American'/'A' or 'European'/'E')\nOption style: ";
+        cin >> style;
+    }
 
     Option option{assetPrice,
                   strikePrice,
@@ -86,6 +96,11 @@ string getModel(Option &option) {
                 "European style derivates.\n";
         cout << "Model: ";
         cin >> model;
+        while (!(model == string{"BlackScholes"} || model == string{"BS"} || model == string{"MCSimulation"} || model == string{"MC"}))
+        {
+            cout << "Model must be one of 'BlackScholes'/'BS' or 'MCSimulation'/'MC'.\nModel: ";
+            cin >> model;          
+        }
     }
     return model;
 }
@@ -102,8 +117,16 @@ void getFairOptionPrice(Option &option, string model) {
         int nPaths, nSteps;
         cout << "\n# of asset price paths to simulate: ";
         cin >> nPaths;
+        while (nPaths < 0) {
+            cout << "# of asset price paths to simulate can not be negative.\nPlease enter a positive value: ";
+            cin >> nPaths;
+        }
         cout << "# of timesteps in each path: ";
         cin >> nSteps;
+        while (nSteps < 0) {
+            cout << "# of timesteps in each path can not be negative.\nPlease enter a positive value: ";
+            cin >> nSteps;
+        }
         optionPrice =
             mcSimulation.getRiskFreeOptionPrice(option, nSteps, nPaths);
         cout << "\nThe Monte-Carlo price of the option is: " << optionPrice
