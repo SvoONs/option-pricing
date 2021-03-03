@@ -10,10 +10,10 @@ Currently, two different models are implemented which can be used to determine t
 ## Project structure
 The main file of this project is src/option_pricing.cpp. It processes and validates user input and passes the data to the evaluation model and outputs the computed price. 
 
-The project uses an option struct defined in include/option.h as a data container holding the characteristical data of an option. This includes the price of the underlying stock, the price at which the option can be exercised (strike price), a risk free interest rate offered on the market, the volatility of the underlying asset, the time to maturity of the option, the option right, being either *Put* or *Call* as well as the option style, *American* or *European*. This option struct is passed to the model that should be used for pricing the option.
+The project uses an ``Option`` struct defined in include/option.h as a data container which holds the characteristical data of an option. This includes the price of the underlying stock, the price at which the option can be exercised (strike price), a risk free interest rate offered on the market, the volatility of the underlying asset, the time to maturity of the option, the option right, being either *Put* or *Call* as well as the option style, *American* or *European*. This option struct is passed to the model that should be used for pricing the option.
 
 There are currently two models implemented. An analytical formula in src/black_scholes.cpp for European style options and a Monte Carlo simulation based evaluation model as declared in include/mc_simulation.h.
-This file defines a class to generate random paths of an asset price ``AssetPriceGenerator``. The class is used by the MCSimulation class to generate a given number of ``nPath`` different simulated stock price paths, each path containing `nSteps` prices. Those paths are used by the MCSimulation class member functions to compute an expected discounted payout of the option in the future.
+This file defines a class to generate random paths of an asset price ``AssetPriceGenerator``. The asset price paths are simulated to follow a [Geometric Brownian Motion](https://en.wikipedia.org/wiki/Geometric_Brownian_motion). The class is used by the MCSimulation class to generate a given number of ``nPath`` different simulated stock price paths, each path containing `nSteps` prices. Those paths are used by the MCSimulation class member functions to compute an expected discounted payout of the option in the future.
 
 Finally, there are a couple of useful helper functions provided in include/utils.h.
 
@@ -32,16 +32,17 @@ Also, for the Monte Carlo evaluation of options with early-exercise the linear a
 
 ## Running
 
-To use ``option-pricing`` for determination of the price of an option, run
+In order to calculate the price of an option using ``option-pricing`` run
 ```bash
 ./OptionPricing
 ```
-from inside the build directory. The program will ask you for the required input parameters in order to determine the fair price of your option.
+from inside the build directory. The program will ask you for the required option parameters in order to determine the fair price of your option.
 
 First, those are the characteristics of the option: current asset price, strike price, interest rate, volatility of the asset and years to maturity of the option.
-Second, you get to choose the model you would like to use to evaluate the option price. Note, that for European style options the Black-Scholes model provides an analytical formula to determine the value of the option. The value determined using Monte Carlo simulation converges to that same value with an increasing number of simulated asset price paths but won't be identical to the value retrieved using Black Scholes.
+Second, you get to choose the model you would like to use to evaluate the option price. Note that for European style options the Black-Scholes model provides an analytical formula to determine the value of the option. The value determined using Monte Carlo simulation converges to that same value with an increasing number of simulated asset price paths but won't be identical to the value retrieved using Black Scholes. To price American style options, currently only Monte Carlo Simulation is available.
 
-It looks like this. (TODO: gif)
+A running example is shown below.
+![](run_example.gif)
 
 ## Running tests
 In order to run all unit tests at once you can just run
@@ -81,8 +82,3 @@ include/utils.h, line 7 & 9
 
 __Concurrency:__
 * The project uses multithreading: src/mc_simulation.cpp, line 117
-
-## Code formatting (TODO)
-```bash
-clang-format-8 -i ../include/*.h ../src/*.cpp -style="{BasedOnStyle: google, IndentWidth: 4}"
-```

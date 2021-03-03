@@ -71,15 +71,16 @@ Option getOptionFromUserInput() {
 }
 
 string getModel(Option &option) {
-    cout << "\nNext, choose which model should be used to determine the fair "
-            "option price.";
     string model;
     if (option.style == OptionStyle::American) {
         cout << "\nSince you are pricing an American style option, the only "
-                "currently available model is Monte Carlo Simulation";
+                "currently available pricing model is Monte Carlo Simulation";
         model = "MCSimulation";
     } else {
-        cout << "\nCurrently available models are 'BlackScholes'/'BS' for "
+        cout << "\nNext, choose which model should be used to determine the "
+                "fair "
+                "option price. \nCurrently available models are "
+                "'BlackScholes'/'BS' for "
                 "European style options\n or 'MCSimulation'/'MC' for American "
                 "and "
                 "European style derivates.\n";
@@ -101,7 +102,7 @@ void getFairOptionPrice(Option &option, string model) {
         int nPaths, nSteps;
         cout << "\n# of asset price paths to simulate: ";
         cin >> nPaths;
-        cout << "\n# of timesteps in each path: ";
+        cout << "# of timesteps in each path: ";
         cin >> nSteps;
         optionPrice =
             mcSimulation.getRiskFreeOptionPrice(option, nSteps, nPaths);

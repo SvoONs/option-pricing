@@ -26,8 +26,8 @@ class MCSimulation {
 
    private:
     double evaluateEarlyExerciseOption(Option &option,
-                                Eigen::MatrixXd &simulatedAssetPrices,
-                                double dt) const;
+                                       Eigen::MatrixXd &simulatedAssetPrices,
+                                       double dt) const;
 };
 
 #endif

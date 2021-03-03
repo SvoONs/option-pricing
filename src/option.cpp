@@ -25,7 +25,7 @@ double Option::getPayout(double currentAssetPrice) const {
 std::ostream &operator<<(std::ostream &os, const Option &option) {
     auto style = option.style == 0 ? "American" : "European";
     auto right = option.right == 0 ? "Call" : "Put";
-    os << style << " " << right << " -> "
+    os << style << " " << right << " => "
        << "asset price: " << option.assetPrice << "$"
        << ", strike: " << option.strikePrice << "$"
        << ", interest: " << option.interest * 100 << "%"

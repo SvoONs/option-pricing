@@ -34,9 +34,8 @@ std::vector<double> AssetPriceGenerator::generateAssetPrices(int seed,
     return assetPrices;
 }
 
-double MCSimulation::evaluateEarlyExerciseOption(Option &option,
-                                          Eigen::MatrixXd &simulatedAssetPrices,
-                                          double dt) const {
+double MCSimulation::evaluateEarlyExerciseOption(
+    Option &option, Eigen::MatrixXd &simulatedAssetPrices, double dt) const {
     int m = simulatedAssetPrices.rows(), n = simulatedAssetPrices.cols();
     //
     auto payoutLambda = [option](const double &price) {
@@ -113,10 +112,10 @@ double MCSimulation::getRiskFreeOptionPrice(Option &option, int nSteps,
                                        option.sigma, dt};
     std::vector<std::future<std::vector<double>>> paths;
     for (size_t i = 0; i < nPaths; i++) {
-        int seed = i+42;
+        int seed = i + 42;
         paths.push_back(std::async(std::launch::async,
-                                      &AssetPriceGenerator::generateAssetPrices,
-                                      &priceGenerator, seed, nSteps));
+                                   &AssetPriceGenerator::generateAssetPrices,
+                                   &priceGenerator, seed, nSteps));
     }
 
     double optionPrice;
