@@ -56,6 +56,12 @@ Alternatively, you can run a single test suite using the corresponding executabl
 ./TestOption
 ```
 
+## Contributing (WIP)
+Contributions are always welcome.
+
+### Code formatting
+Run ``format_code`` from the source directory.
+
 ## Planned future work
 * add more pricing models
 * support more complex option types
