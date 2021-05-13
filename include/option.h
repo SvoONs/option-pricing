@@ -12,12 +12,13 @@ enum OptionStyle { American = 0, European = 1 };
 
 struct Option {
     Option(double assetPrice, double strikePrice, double interest, double sigma,
-           double yearsToMaturity, OptionRight right, OptionStyle style);
+           double yearsToMaturity, OptionRight right, OptionStyle style, double dividendYield=0);
     const double assetPrice;
     const double strikePrice;
     const double interest;
     const double sigma;
     const double yearsToMaturity;
+    const double dividendYield;
     const OptionRight right;
     const OptionStyle style;
 

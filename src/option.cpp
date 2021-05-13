@@ -3,14 +3,15 @@
 
 Option::Option(double assetPrice, double strikePrice, double interest,
                double sigma, double yearsToMaturity, OptionRight right,
-               OptionStyle style)
+               OptionStyle style, double dividendYield)
     : assetPrice(assetPrice),
       strikePrice(strikePrice),
       interest(interest),
       sigma(sigma),
       yearsToMaturity(yearsToMaturity),
       right(right),
-      style(style) {}
+      style(style),
+      dividendYield(dividendYield) {}
 
 double Option::getPayout(double currentAssetPrice) const {
     double payoff;
